@@ -8,7 +8,10 @@ spring:
     import: "optional:configserver:"
   cloud:
     config:
+      #disable for docker
       uri: http://localhost:8888
+      # enable for docker
+#     uri: http://config-service:8888
       request-connect-timeout: 5000
       request-read-timeout: 5000
       fail-fast: true
@@ -22,7 +25,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh
+        include: refresh,health,info
 server:
   tomcat:
     connection-timeout: 2s
@@ -30,4 +33,3 @@ server:
     threads:
       max: 50
       min-spare: 5
-  port: 9001
