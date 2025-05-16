@@ -132,3 +132,16 @@ For further reference, please consider the following sections:
 These additional references should also help you:
 
 * [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
+
+### docker compose 
+docker-compose -f docker-compose.yml up
+
+### sdkman commands
+sdk env install --> installs the java and gradle versions based on .sdkmanrc and the current shell points to those versions
+sdk env  --> the current shell points to those versions
+sdk list java/gradle --> lists different java/gradle versions 
+sdk install java <specific java identifier>
+sdk install gradle <specific gradle identifier>
+
+### postman collection for local testing
+under directory postman
