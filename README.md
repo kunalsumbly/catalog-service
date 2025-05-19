@@ -26,7 +26,7 @@ title="Northern Lights" isbn="1234adsdsa"`
 
 
 # Agile Testing Quadrants
-![api-first-contract.png](documentation/api-first-contract.png)
+![agile_testing_quadrants.png](documentation/agile_testing_quadrants.png)
 
 ## Examples of unit testing
 * [BookValidationTests.java](src/test/java/com/polarbookshop/catalogservice/domain/BookValidationTests.java)
