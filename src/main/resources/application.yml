@@ -1,17 +1,16 @@
-polar:
-  greeting: Welcome to the local book catalog
-
 spring:
+  profiles:
+    include: fallback
   application:
     name: catalog-service
   config:
     import: "optional:configserver:"
   cloud:
     config:
-      uri: http://config-service:8888
+      #      uri: http://config-service:8888
+      uri: http://localhost:8888
       request-connect-timeout: 5000
       request-read-timeout: 5000
-      fail-fast: true
       retry:
         max-attempts: 6
         initial-interval: 1000
@@ -20,7 +19,8 @@ spring:
     bus:
       enabled: true
   rabbitmq:
-    host: ${SPRING_RABBITMQ_HOST:rabbitmq}          # Default to 'rabbitmq' if not set
+    #    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+    host: ${SPRING_RABBITMQ_HOST:localhost}          # Default to 'rabbitmq' if not set
     port: ${SPRING_RABBITMQ_PORT:5672}              # Default to 5672 if not set
     username: ${SPRING_RABBITMQ_USERNAME:guest}     # Default to 'guest' if not set
     password: ${SPRING_RABBITMQ_PASSWORD:guest}     # Default to 'guest' if not set
@@ -35,7 +35,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh,health,info
+        include: refresh,health,info,env
 server:
   tomcat:
     connection-timeout: 2s
