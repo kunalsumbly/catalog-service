@@ -1,0 +1,7 @@
+.github
+.idea
+.gradle
+documentation
+gradle
+local_deployment_k8s
+postman
