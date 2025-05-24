@@ -1,30 +1,40 @@
-# Use a lightweight JDK base image
-FROM gradle:8.8-jdk21 AS builder
+# Multi-stage build
 
+# Build stage
+FROM eclipse-temurin:21-jdk AS builder
+
+# Install required tools
+RUN apt-get update && \
+    apt-get install -y curl zip unzip wget
+
+# Create app directory
 WORKDIR /app
 
-COPY local_build_deploy.sh /app/local_build_deploy.sh
+# Copy source code and build script
+COPY . .
 
-# Copy the Gradle wrapper and source files
-COPY . /app
-
-
-RUN ls -la /app
-
-RUN sleep 99999
-
-# Run the local_build_deploy.sh script that triggers Gradle assemble
-RUN chmod +x /app/local_build_deploy.sh && ./app/local_build_deploy.sh
+# Set DOCKER_BUILD environment variable to true
+ENV DOCKER_BUILD=true
 
 
+RUN keytool -import -trustcacerts -noprompt \
+       -alias zscaler \
+       -file ZscalerRootCA.pem \
+       -keystore /opt/java/openjdk/lib/security/cacerts \
+       -storepass changeit
 
-FROM eclipse-temurin:21-jre
+# Make the build script executable and run Gradle directly
+RUN chmod +x ./gradlew && \
+    ./gradlew clean assemble \
+    -Dorg.gradle.jvmargs="-Dhttp.proxyHost=host.docker.internal -Dhttp.proxyPort=3129 -Dhttps.proxyHost=host.docker.internal -Dhttps.proxyPort=3129"
+
+# Runtime stage
+FROM amazoncorretto:21.0.4
 
 # Create an app directory inside the container
 WORKDIR /app
 
-# Copy the jar file into /app
-# Replace 'your-app.jar' with your actual jar name
+# Copy the jar file from the builder stage
 COPY --from=builder /app/build/libs/catalog-service-0.0.1-SNAPSHOT.jar /app/catalog-service.jar
 
 # Expose port 8080 (for documentation only)
