@@ -1,13 +1,11 @@
 spring:
-  profiles:
-    include: fallback
   application:
     name: catalog-service
   config:
     import: "optional:configserver:"
   cloud:
     config:
-      #      uri: http://config-service:8888
+#      uri: http://config-service:8888
       uri: http://localhost:8888
       request-connect-timeout: 5000
       request-read-timeout: 5000
@@ -16,26 +14,12 @@ spring:
         initial-interval: 1000
         max-interval: 2000
         multiplier: 1.1
-    bus:
-      enabled: true
-  rabbitmq:
-    #    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
-    host: ${SPRING_RABBITMQ_HOST:localhost}          # Default to 'rabbitmq' if not set
-    port: ${SPRING_RABBITMQ_PORT:5672}              # Default to 5672 if not set
-    username: ${SPRING_RABBITMQ_USERNAME:guest}     # Default to 'guest' if not set
-    password: ${SPRING_RABBITMQ_PASSWORD:guest}     # Default to 'guest' if not set
-    retry:
-      initial-interval: 5000
-      max-interval: 30000
-      max-attempts: 10
-    ssl:
-      enabled: false
 
 management:
   endpoints:
     web:
       exposure:
-        include: refresh,health,info,env
+        include: refresh,health,info,env,loggers
 server:
   tomcat:
     connection-timeout: 2s

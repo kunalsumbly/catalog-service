@@ -9,15 +9,15 @@
 
 
 
-    <logger name="org.springframework" level="DEBUG" />
-    <logger name="com.google.code" level="INFO" />
-    <logger name="net.rubyeye" level="INFO" />
+    <logger name="org.springframework"/>
+    <logger name="com.google.code"/>
+    <logger name="net.rubyeye"/>
 
     <!-- for Apache http client -->
     <logger name="httpclient.wire" />
 
     <logger name="org.apache.http" />
-    <root level="info">
+    <root>
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

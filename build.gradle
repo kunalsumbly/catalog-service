@@ -33,7 +33,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation('org.springframework.cloud:spring-cloud-starter-config')
-    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 
     // to make sure that if connectivity with config server is more resilient
     implementation('org.springframework.retry:spring-retry')

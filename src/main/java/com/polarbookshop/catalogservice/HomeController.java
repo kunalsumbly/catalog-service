@@ -17,7 +17,11 @@ public class HomeController {
 
     @GetMapping("/")
     public String getGreeting() {
-        log.info("Hit ME !!! controller called ::::");
+        log.info("Hit ME info!!! controller called ::::");
+        log.warn("Hit ME warn!!! controller called ::::");
+        log.debug("Hit ME debug !!! controller called ::::");
+        log.error("Hit ME error!!! controller called ::::");
+        log.trace("Hit ME trace !!! controller called ::::");
         return polarProperties.getGreeting();
     }
 }
