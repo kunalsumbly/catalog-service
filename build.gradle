@@ -44,6 +44,10 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
+    // spring-jdbc
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    runtimeOnly 'org.postgresql:postgresql'
+
 
 
     annotationProcessor('org.springframework.boot:spring-boot-configuration-processor')
