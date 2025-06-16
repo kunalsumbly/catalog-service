@@ -16,7 +16,7 @@ public class BookJsonTests {
 
     @Test
     void testSerialize() throws Exception {
-        var book = new Book("1234567890", "Polar Bookshop", "A book about polar bears", 10.0);
+        var book = Book.build("1234567890", "Polar Bookshop", "A book about polar bears", 10.0);
         var jsonContent = json.write(book);
         assertThat(jsonContent).extractingJsonPathStringValue("@.isbn")
                                 .isEqualTo(book.isbn());

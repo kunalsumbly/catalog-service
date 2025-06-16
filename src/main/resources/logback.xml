@@ -10,7 +10,7 @@
 
 
 
-    <logger name="org.springframework" level="DEBUG" />
+    <logger name="org.springframework" level="WARN" />
     <logger name="com.google.code" level="INFO" />
     <logger name="net.rubyeye" level="INFO" />
 
@@ -18,7 +18,7 @@
     <logger name="httpclient.wire" />
 
     <logger name="org.apache.http" />
-    <root level="info">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

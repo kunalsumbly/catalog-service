@@ -20,7 +20,7 @@ class CatalogServiceApplicationTests {
     void whenPostRequestThenBookCreated() {
         webTestClient.post()
                 .uri("/api/books")
-                .bodyValue(new Book("1234567890", "The Hobbit", "Jack Sparrow", 10.0))
+                .bodyValue(Book.build("1234567890", "The Hobbit", "Jack Sparrow", 10.0))
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody(Book.class).value(book -> {

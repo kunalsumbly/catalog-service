@@ -1,20 +1,20 @@
 version: "3.8"
 
 services:
-  catalog-service-demo:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    platform: linux/amd64
-    container_name: catalog-service-demo
-    environment:
-      - SPRING_PROFILES_ACTIVE=local
-    ports:
-      - "8080:8080"
-    networks:
-      - app-network
-    depends_on:
-      - polar-postgres-catalog
+#  catalog-service-demo:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    platform: linux/amd64
+#    container_name: catalog-service-demo
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=local
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - app-network
+#    depends_on:
+#      - polar-postgres-catalog
 
   polar-postgres-catalog:
     image: postgres:latest
