@@ -15,23 +15,23 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 
 @Component
 public class ConfigRefresher {
 
+    private LoggerDelegate loggerDelegate;
 
-    private Environment environment;
-
-    public ConfigRefresher(Environment environment) {
-        this.environment = environment;
+    public ConfigRefresher (LoggerDelegate loggerDelegate) {
+        this.loggerDelegate = loggerDelegate;
     }
+
     private static final Logger LOG = LoggerFactory.getLogger(ConfigRefresher.class);
 
     private final RestTemplate restTemplate = new RestTemplate();
 
     private static final String REFRESH_URL = "http://localhost:8080/actuator/refresh";
-    public static final String LOGGING_ACTUATOR_URL = "http://localhost:8080/actuator/loggers/root";
 
     @Scheduled(fixedRate = 60000) // 1 minute (in milliseconds)
     public void refreshConfig() {
@@ -54,30 +54,13 @@ public class ConfigRefresher {
             List<String> refreshedKeys = response.getBody();
             // Log confirmation
             LOG.info("Configuration refreshed successfully, refreshKeys = {}",refreshedKeys);
-           if (refreshedKeys != null && refreshedKeys.contains("logging.level.root")) {
-               LOG.info("Detected changes for logging.level.root, updating log level");
-               String newLogLevel = environment.getProperty("logging.level.root");
-               LOG.info("New log level: {}", newLogLevel);
-
-               // Prepare payload
-               Map<String, String> logPayload = new HashMap<>();
-               logPayload.put("configuredLevel", newLogLevel);
-
-               HttpEntity<Map<String, String>> logRequest = new HttpEntity<>(logPayload, headers);
-
-               // Call /actuator/loggers/root
-               ResponseEntity<String> logResponse = restTemplate.exchange(
-                       LOGGING_ACTUATOR_URL,
-                       HttpMethod.POST,
-                       logRequest,
-                       String.class
-               );
-               LOG.info("Log level updated. Response: {}", logResponse.getStatusCode());
-           }
-
+            refreshedKeys.stream().filter(key -> key.contains("logging.level")).forEach(
+                   key ->  loggerDelegate.handleLogLevelUpdates(key,headers)
+            );
         } catch (Exception e) {
             // Log error details
-            LOG.warn("Failed to refresh configuration:{)", e.getMessage());
+            LOG.error("Failed to refresh configuration:{}", e.getMessage());
         }
     }
+
 }
