@@ -1,8 +1,8 @@
 spring:
   application:
     name: catalog-service
-  config:
-    import: "optional:configserver:"
+#  config:
+#    import: "optional:configserver:"
   cloud:
     config:
 #      uri: http://config-service:8888
