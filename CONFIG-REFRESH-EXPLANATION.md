@@ -1,145 +1,86 @@
-# Spring Cloud Config Refresh Process with Manual Acknowledgment
 
-This document explains the configuration refresh process implemented in this application, which uses Spring Cloud Config with Spring Cloud Bus over RabbitMQ, featuring manual acknowledgment for reliability.
+# Making Redis Connection Refreshable with @RefreshScope
 
-## Components Overview
+Yes, you need to add the `@RefreshScope` annotation to make your Redis connection refreshable and dynamically change at runtime when configuration properties like the password are updated in the Config Server.
 
-### 1. ConfigRefreshMonitor
+## Current Setup
 
-**Purpose**: Tracks the status of configuration refresh operations.
+Currently, your application:
+1. Uses Spring Boot's auto-configuration for Redis
+2. Gets the Redis password from Config Server via `${REDIS_PASSWORD}` in application.properties
+3. Has a `ConfigRefresher` class that calls the `/actuator/refresh` endpoint every minute
 
-**Key Features**:
-- Thread-safe using AtomicBoolean for state tracking
-- Monitors three critical aspects of the refresh process:
-  - Whether the config server was reachable
-  - Whether a valid environment was received
-  - Whether the actual refresh operation succeeded
-- Provides a unified `isRefreshSuccessful()` method that checks all conditions
+However, this setup doesn't automatically recreate the Redis connection when the password changes. The environment properties are refreshed, but the Redis connection bean continues to use the old password.
 
-**Location**: `com.polarbookshop.catalogservice.config.ConfigRefreshMonitor`
+## Solution: Add @RefreshScope to Redis Configuration
 
-### 2. MonitoringConfigDataLoader
+To make the Redis connection refreshable, you need to create an explicit Redis configuration class with `@RefreshScope`:
 
-**Purpose**: Intercepts the config loading process to monitor its success or failure.
+```java
+package com.polarbookshop.catalogservice.config;
 
-**Key Features**:
-- Extends Spring's `ConfigServerConfigDataLoader`
-- Hooks into the config loading process to track:
-  - If the config server was reachable
-  - If a valid environment was received
-- Updates the `ConfigRefreshMonitor` with this information
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.beans.factory.annotation.Value;
 
-**Location**: `com.polarbookshop.catalogservice.config.client.MonitoringConfigDataLoader`
+@Configuration
+public class RedisConfig {
 
-### 3. ConfigDataLoaderConfiguration
+    @Value("${spring.data.redis.host}")
+    private String redisHost;
+    
+    @Value("${spring.data.redis.port}")
+    private int redisPort;
+    
+    @Value("${spring.data.redis.password}")
+    private String redisPassword;
 
-**Purpose**: Registers the custom `MonitoringConfigDataLoader` to override Spring's default loader.
+    @Bean
+    @RefreshScope
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(redisHost, redisPort);
+        redisConfig.setPassword(redisPassword);
+        return new LettuceConnectionFactory(redisConfig);
+    }
 
-**Key Features**:
-- Uses `@Configuration` and `@Bean` annotations to register the custom loader
-- Marks the bean as `@Primary` to ensure it's used instead of the default
-
-**Location**: `com.polarbookshop.catalogservice.config.client.ConfigDataLoaderConfiguration`
-
-### 4. LoggingConfig
-
-**Purpose**: Provides a `DeferredLogFactory` bean required by the `MonitoringConfigDataLoader`.
-
-**Key Features**:
-- Creates a bean of `DeferredLogFactory` that's needed for the `ConfigServerConfigDataLoader` constructor
-- Enables proper logging during the early bootstrap phase of the application
-- Required because Spring Boot doesn't expose `DeferredLogFactory` as a bean by default
-
-**Location**: `com.polarbookshop.catalogservice.config.client.LoggingConfig`
-
-### 5. ManualAckBusListener
-
-**Purpose**: Listens for config refresh events from Spring Cloud Bus and manually acknowledges them.
-
-**Key Features**:
-- Implements `ChannelAwareMessageListener` to handle RabbitMQ messages
-- Filters out non-config-refresh messages to prevent unnecessary processing
-- Uses `ContextRefresher` to perform the actual refresh
-- Only acknowledges messages if:
-  - The message is identified as a config refresh event
-  - The config server was reachable
-  - A valid environment was received
-  - The refresh operation succeeded
-- Otherwise, it negatively acknowledges (NACKs) the message for requeuing
-
-**Location**: `com.polarbookshop.catalogservice.config.ManualAckBusListener`
-
-### 6. RabbitMQListenerConfig
-
-**Purpose**: Configures RabbitMQ for Spring Cloud Bus with manual acknowledgment.
-
-**Key Features**:
-- Creates a durable named queue for config refresh messages
-- Sets up the Spring Cloud Bus exchange
-- Binds the queue to the exchange
-- Configures a message listener container with manual acknowledgment mode
-
-**Location**: `com.polarbookshop.catalogservice.config.RabbitMQListenerConfig`
-
-## The Config Refresh Process
-
-### 1. Initial Configuration Loading
-
-When the application starts:
-1. Spring Boot's config loading mechanism is triggered
-2. Our `MonitoringConfigDataLoader` intercepts the loading process
-3. It attempts to fetch configuration from the config server
-4. It updates `ConfigRefreshMonitor` with the status:
-   - Was the config server reachable?
-   - Was a valid environment received?
-
-### 2. Runtime Configuration Refresh
-
-When a configuration change is published:
-1. The change is pushed to the config server
-2. The config server publishes a message to the Spring Cloud Bus (RabbitMQ)
-3. The message is routed to our application's queue
-4. `ManualAckBusListener` receives the message and:
-   - Checks if the message is a config refresh event by examining headers and content
-   - If not a config refresh event: ACKs the message without processing
-   - If it is a config refresh event:
-     - Resets the `ConfigRefreshMonitor` state
-     - Calls `contextRefresher.refresh()` to refresh the application context
-     - Updates `ConfigRefreshMonitor` with the refresh result
-     - Checks `configRefreshMonitor.isRefreshSuccessful()`
-     - If successful: ACKs the message
-     - If unsuccessful: NACKs the message for requeuing
-
-### 3. Manual Refresh via Actuator
-
-When a manual refresh is triggered via `/actuator/refresh`:
-1. Spring's `RefreshEndpoint` is invoked
-2. It calls the same `contextRefresher.refresh()` used by our listener
-3. The refresh process updates the application context
-4. No RabbitMQ message is involved in this case
-
-## Benefits of This Implementation
-
-1. **Reliability**: Configuration changes are only acknowledged if successfully applied
-2. **Resilience**: Failed refreshes are retried automatically via RabbitMQ requeuing
-3. **Monitoring**: The refresh process is fully monitored and logged
-4. **Thread Safety**: All state tracking is thread-safe using atomic variables
-5. **Efficiency**: Intelligent message filtering prevents processing of non-config-refresh messages, reducing unnecessary CPU and network usage
-
-## Configuration
-
-The system is configured in `application.yml` with these key settings:
-
-```yaml
-spring:
-  cloud:
-    bus:
-      enabled: true
-      destination: configRefreshQueue
-  rabbitmq:
-    listener:
-      simple:
-        acknowledge-mode: manual
+    @Bean(name = "stringRedisTemplate")
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+        template.setKeySerializer(stringRedisSerializer);
+        template.setValueSerializer(stringRedisSerializer);
+        template.setHashKeySerializer(stringRedisSerializer);
+        template.setHashValueSerializer(stringRedisSerializer);
+        
+        template.afterPropertiesSet();
+        return template;
+    }
+}
 ```
 
-This ensures Spring Cloud Bus is enabled and configured to use manual acknowledgment mode.
+## How This Works
+
+1. The `@RefreshScope` annotation on the `redisConnectionFactory()` method tells Spring to recreate this bean when configuration properties change
+2. When your `ConfigRefresher` calls the `/actuator/refresh` endpoint, Spring will:
+    - Update the environment properties (including `spring.data.redis.password`)
+    - Destroy and recreate any beans marked with `@RefreshScope` that depend on those properties
+    - The new Redis connection will use the updated password
+
+3. Your `HomeController` will automatically use the new connection since it depends on the `RedisTemplate` bean
+
+## Important Notes
+
+1. Only the `RedisConnectionFactory` needs `@RefreshScope` since it's the bean that directly uses the password
+2. The `RedisTemplate` doesn't need `@RefreshScope` because it depends on the connection factory
+3. This approach works with both plain text and encrypted passwords in the Config Server
+4. No changes are needed to your existing `ConfigRefresher` class
+
+With this configuration, your Redis connection will automatically use the new password whenever it changes in the Config Server, without requiring an application restart.
