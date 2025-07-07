@@ -27,3 +27,7 @@ server:
     threads:
       max: 50
       min-spare: 5
+
+encrypt:
+  key: "secret-key"
+  salt: "0123456789abcdef"

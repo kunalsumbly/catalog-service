@@ -1,8 +1,11 @@
 package com.polarbookshop.catalogservice.config.redis;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.endpoint.event.RefreshEvent;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.stereotype.Component;
@@ -12,28 +15,39 @@ import java.util.List;
 @Component
 @Slf4j
 public class RedisConnectionRefreshHandler {
-    
-    private final LettuceConnectionFactory lettuceConnectionFactory;
-    
-    public RedisConnectionRefreshHandler(@Qualifier("customRedisConnectionFactory") LettuceConnectionFactory lettuceConnectionFactory) {
-        this.lettuceConnectionFactory = lettuceConnectionFactory;
+
+    private final ApplicationContext applicationContext;
+
+    public RedisConnectionRefreshHandler(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    @PostConstruct
+    public void init() {
+        log.info("RedisConnectionRefreshHandler initialized successfully");
     }
 
     @EventListener
-    public void handleRefreshEvent(RefreshEvent event) {
-        // Get the keys from the event source
-        @SuppressWarnings("unchecked")
-        List<String> keys = (List<String>) event.getSource();
+    public void handleEnvironmentChangeEvent(EnvironmentChangeEvent event) {
+        log.info("=== ENVIRONMENT CHANGE EVENT RECEIVED ===");
+        log.info("Changed keys: {}", event.getKeys());
 
-        // Check if Redis password was updated
-        if (keys.contains("spring.data.redis.password")) {
+        // EnvironmentChangeEvent DOES have getKeys() method
+        if (event.getKeys().contains("spring.data.redis.password")) {
             log.info("Redis password change detected, resetting connections...");
             resetRedisConnections();
+        } else {
+            log.info("No Redis password change detected");
         }
     }
     
     private void resetRedisConnections() {
         try {
+            // Get the fresh @RefreshScope bean from application context
+            LettuceConnectionFactory lettuceConnectionFactory = applicationContext.getBean(
+                    "customRedisConnectionFactory", LettuceConnectionFactory.class
+            );
+
             // Reset the underlying shared connection
             lettuceConnectionFactory.resetConnection();
             
