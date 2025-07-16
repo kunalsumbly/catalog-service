@@ -1,4 +1,9 @@
 spring:
+  config:
+    import:
+      - "aws-secretsmanager:/config-secrets/${spring.application.name}/${spring.profiles.active:default}/encrypt.key"
+      - "aws-secretsmanager:/config-secrets/${spring.application.name}/${spring.profiles.active:default}/encrypt.salt"
+      - "optional:configserver:"
   application:
     name: catalog-service
 #  config:
@@ -6,7 +11,7 @@ spring:
   cloud:
     config:
 #      uri: http://config-service:8888
-      uri: http://localhost:8888
+      uri: http://localhost:8888/config
       request-connect-timeout: 5000
       request-read-timeout: 5000
       retry:
@@ -28,6 +33,3 @@ server:
       max: 50
       min-spare: 5
 
-encrypt:
-  key: "secret-key"
-  salt: "0123456789abcdef"
