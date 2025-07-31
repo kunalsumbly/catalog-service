@@ -1,0 +1,54 @@
+{
+  "employees": [
+    {
+      "employeeName": "John Smith",
+      "department": "Engineering",
+      "email": "john.smith@company.com"
+    },
+    {
+      "employeeName": "Sarah Johnson",
+      "department": "Marketing",
+      "email": "sarah.johnson@company.com"
+    },
+    {
+      "employeeName": "Michael Brown",
+      "department": "Finance",
+      "email": "michael.brown@company.com"
+    },
+    {
+      "employeeName": "Emily Davis",
+      "department": "Human Resources",
+      "email": "emily.davis@company.com"
+    },
+    {
+      "employeeName": "David Wilson",
+      "department": "Engineering",
+      "email": "david.wilson@company.com"
+    },
+    {
+      "employeeName": "Jennifer Lee",
+      "department": "Product Management",
+      "email": "jennifer.lee@company.com"
+    },
+    {
+      "employeeName": "Robert Taylor",
+      "department": "Sales",
+      "email": "robert.taylor@company.com"
+    },
+    {
+      "employeeName": "Lisa Anderson",
+      "department": "Customer Support",
+      "email": "lisa.anderson@company.com"
+    },
+    {
+      "employeeName": "James Martinez",
+      "department": "Research & Development",
+      "email": "james.martinez@company.com"
+    },
+    {
+      "employeeName": "Patricia Garcia",
+      "department": "Operations",
+      "email": "patricia.garcia@company.com"
+    }
+  ]
+}
