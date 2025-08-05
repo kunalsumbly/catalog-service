@@ -33,7 +33,7 @@ public class RestConfig {
     @Bean
     RestTemplate myRestClient(HttpComponentsClientHttpRequestFactory defaultHttpClientFactory) {
         return new RestTemplateBuilder()
-                //.connectTimeout(Duration.ofMillis(connectTimeoutMs))
+                .connectTimeout(Duration.ofMillis(connectTimeoutMs))
                 .requestFactory(() -> defaultHttpClientFactory)
                 .build();
     }
@@ -42,7 +42,7 @@ public class RestConfig {
     HttpComponentsClientHttpRequestFactory defaultHttpClientFactory(HttpClient defaultHttpClient) {
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setHttpClient(defaultHttpClient);
-        //requestFactory.setConnectTimeout(connectTimeoutMs);
+        requestFactory.setConnectTimeout(connectTimeoutMs);
         return requestFactory;
     }
 

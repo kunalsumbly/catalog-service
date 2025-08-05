@@ -61,7 +61,7 @@ public class BlackHoleDemoController {
 
     @GetMapping("/test-blackhole")
     public ResponseEntity<String> testBlackHole() {
-        String url = "http://3.25.76.64/api/kunal/helloworld";
+        String url = "http://54.253.188.75/mcssapi-501/rp-webapp-9-common";
         // To simulate a black-hole, block or drop packets to httpbin.org,
         // e.g., via local firewall: sudo iptables -A OUTPUT -p tcp --dport 443 -j DROP
 
