@@ -77,7 +77,6 @@ public class RestConfig {
 
         // Connection timeout configuration
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(Timeout.ofMilliseconds(connectTimeoutMs))
                 .setConnectionRequestTimeout(Timeout.ofMilliseconds(connectTimeoutMs))
                 .build();
 
