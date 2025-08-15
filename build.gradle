@@ -1,8 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.4'
+    id 'org.springframework.boot' version '3.3.9'
     id 'io.spring.dependency-management' version '1.1.7'
 }
+
+apply plugin: 'org.springframework.boot'
 
 group = 'com.polarbookshop'
 version = '0.0.1-SNAPSHOT'
@@ -24,7 +26,7 @@ configurations {
 }
 
 ext {
-    set('springCloudVersion', "2024.0.1")
+    set('springCloudVersion', "2023.0.5")
 }
 
 
@@ -32,7 +34,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation('org.springframework.cloud:spring-cloud-starter-config')
+    implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.3.1'
+    implementation group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.16'
 
     // to make sure that if connectivity with config server is more resilient
     implementation('org.springframework.retry:spring-retry')

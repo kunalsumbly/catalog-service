@@ -35,13 +35,13 @@ public class RestConfig {
     private String url;
 
 
-    @Bean
-    RestTemplate myRestClient(HttpComponentsClientHttpRequestFactory defaultHttpClientFactory) {
-        return new RestTemplateBuilder()
-                .connectTimeout(Duration.ofMillis(connectTimeoutMs))
-                .requestFactory(() -> defaultHttpClientFactory)
-                .build();
-    }
+//    @Bean
+//    RestTemplate myRestClient(HttpComponentsClientHttpRequestFactory defaultHttpClientFactory) {
+//        return new RestTemplateBuilder()
+//                .connectTimeout(Duration.ofMillis(connectTimeoutMs))
+//                .requestFactory(() -> defaultHttpClientFactory)
+//                .build();
+//    }
 
     @Bean
     HttpComponentsClientHttpRequestFactory defaultHttpClientFactory(HttpClient defaultHttpClient) {
@@ -49,6 +49,16 @@ public class RestConfig {
         requestFactory.setHttpClient(defaultHttpClient);
         requestFactory.setConnectTimeout(connectTimeoutMs);
         return requestFactory;
+    }
+
+
+
+    @Bean
+    RestTemplate myRestClient(HttpComponentsClientHttpRequestFactory defaultHttpClientFactory) {
+        return new RestTemplateBuilder()
+                .setConnectTimeout(Duration.ofMillis(connectTimeoutMs))
+                .requestFactory(() -> defaultHttpClientFactory)
+                .build();
     }
 
 
@@ -66,7 +76,7 @@ public class RestConfig {
 
         HttpClientConnectionManager httpClientConnectionManager = PoolingHttpClientConnectionManagerBuilder.create()
                 .setDefaultSocketConfig(socketConfig)
-                .setMaxConnPerRoute(10)
+                .setMaxConnPerRoute(20)
                 .setMaxConnTotal(20)
                 .setSSLSocketFactory(connectionFactory)
                 .build();
