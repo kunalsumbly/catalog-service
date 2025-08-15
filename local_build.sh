@@ -55,7 +55,13 @@ else
 fi
 
 
- rm ./local_build/catalog-service-0.0.1-SNAPSHOT.jar
+if [ -f "./local_build/catalog-service-0.0.1-SNAPSHOT.jar" ]; then
+    rm "./local_build/catalog-service-0.0.1-SNAPSHOT.jar"
+    echo "File removed"
+else
+    echo "File does not exist, continuing..."
+fi
+
 
 # Check if build was successful
 if [ $? -eq 0 ]; then
