@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# Parse command line arguments
+USE_PROXY=true
+for arg in "$@"; do
+    case $arg in
+        noproxy)
+            USE_PROXY=false
+            shift
+            ;;
+        *)
+            # Unknown option
+            ;;
+    esac
+done
+
 # Function to check Java version
 check_java_version() {
     if command -v java &> /dev/null; then
@@ -32,8 +46,13 @@ else
 fi
 
 # set the gradle clean assemble 
-echo "Running Gradle build with proxy settings..."
-./gradlew clean assemble  -Dhttp.proxyHost=localhost -Dhttp.proxyPort=3129 -Dhttps.proxyHost=localhost -Dhttps.proxyPort=3129
+if [ "$USE_PROXY" = true ]; then
+    echo "Running Gradle build with proxy settings..."
+    ./gradlew clean assemble -Dhttp.proxyHost=localhost -Dhttp.proxyPort=3129 -Dhttps.proxyHost=localhost -Dhttps.proxyPort=3129
+else
+    echo "Running Gradle build without proxy settings..."
+    ./gradlew clean assemble
+fi
 
 # Check if build was successful
 if [ $? -eq 0 ]; then
