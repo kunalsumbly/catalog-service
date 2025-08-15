@@ -54,6 +54,9 @@ else
     ./gradlew clean assemble
 fi
 
+
+ rm ./local_build/catalog-service-0.0.1-SNAPSHOT.jar
+
 # Check if build was successful
 if [ $? -eq 0 ]; then
     echo "Build successful, copying JAR file..."
