@@ -1,5 +1,6 @@
 package com.polarbookshop.catalogservice.config.client;
 
+import lombok.Data;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
@@ -21,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 
 @Configuration
+@Data
 public class RestConfig {
 
     @Value("${http.connectTimeout:2000}")
@@ -28,6 +30,9 @@ public class RestConfig {
 
     @Value("${http.readTimeout:10000}")
     private int readTimeoutMs;
+
+    @Value("${http.url}")
+    private String url;
 
 
     @Bean
