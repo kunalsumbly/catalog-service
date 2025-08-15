@@ -2,6 +2,7 @@ package com.polarbookshop.catalogservice.config.client;
 
 import lombok.Data;
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
@@ -74,6 +75,12 @@ public class RestConfig {
                 .setSoTimeout(Timeout.ofMilliseconds(readTimeoutMs))
                 .build();
 
+        // Connection timeout configuration
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(Timeout.ofMilliseconds(connectTimeoutMs))
+                .setConnectionRequestTimeout(Timeout.ofMilliseconds(connectTimeoutMs))
+                .build();
+
         HttpClientConnectionManager httpClientConnectionManager = PoolingHttpClientConnectionManagerBuilder.create()
                 .setDefaultSocketConfig(socketConfig)
                 .setMaxConnPerRoute(20)
@@ -82,6 +89,8 @@ public class RestConfig {
                 .build();
 
         return HttpClients.custom()
-                .setConnectionManager(httpClientConnectionManager).build();
+                .setConnectionManager(httpClientConnectionManager)
+                .setDefaultRequestConfig(requestConfig)
+                .build();
     }
 }
