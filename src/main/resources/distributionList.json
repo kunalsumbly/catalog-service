@@ -1,0 +1,124 @@
+{
+  "employeeDistributionList": [
+    {
+      "author": "J.K. Rowling",
+      "book": "Harry Potter and the Philosopher's Stone",
+      "price": 12.99,
+      "genre": "Fantasy"
+    },
+    {
+      "author": "George Orwell",
+      "book": "1984",
+      "price": 13.99,
+      "genre": "Dystopian Fiction"
+    },
+    {
+      "author": "Harper Lee",
+      "book": "To Kill a Mockingbird",
+      "price": 14.50,
+      "genre": "Classic Literature"
+    },
+    {
+      "author": "F. Scott Fitzgerald",
+      "book": "The Great Gatsby",
+      "price": 11.99,
+      "genre": "Classic Literature"
+    },
+    {
+      "author": "Jane Austen",
+      "book": "Pride and Prejudice",
+      "price": 10.99,
+      "genre": "Romance"
+    },
+    {
+      "author": "Agatha Christie",
+      "book": "Murder on the Orient Express",
+      "price": 12.50,
+      "genre": "Mystery"
+    },
+    {
+      "author": "Stephen King",
+      "book": "The Shining",
+      "price": 15.99,
+      "genre": "Horror"
+    },
+    {
+      "author": "Dan Brown",
+      "book": "The Da Vinci Code",
+      "price": 13.50,
+      "genre": "Thriller"
+    },
+    {
+      "author": "J.R.R. Tolkien",
+      "book": "The Lord of the Rings: The Fellowship of the Ring",
+      "price": 16.99,
+      "genre": "Fantasy"
+    },
+    {
+      "author": "Paulo Coelho",
+      "book": "The Alchemist",
+      "price": 12.00,
+      "genre": "Philosophical Fiction"
+    },
+    {
+      "author": "Margaret Atwood",
+      "book": "The Handmaid's Tale",
+      "price": 14.99,
+      "genre": "Dystopian Fiction"
+    },
+    {
+      "author": "Suzanne Collins",
+      "book": "The Hunger Games",
+      "price": 13.25,
+      "genre": "Young Adult"
+    },
+    {
+      "author": "Gillian Flynn",
+      "book": "Gone Girl",
+      "price": 14.75,
+      "genre": "Psychological Thriller"
+    },
+    {
+      "author": "Yuval Noah Harari",
+      "book": "Sapiens: A Brief History of Humankind",
+      "price": 17.99,
+      "genre": "Non-Fiction"
+    },
+    {
+      "author": "Michelle Obama",
+      "book": "Becoming",
+      "price": 18.50,
+      "genre": "Biography"
+    },
+    {
+      "author": "Tara Westover",
+      "book": "Educated",
+      "price": 16.25,
+      "genre": "Memoir"
+    },
+    {
+      "author": "Colleen Hoover",
+      "book": "It Ends with Us",
+      "price": 13.99,
+      "genre": "Contemporary Romance"
+    },
+    {
+      "author": "Andy Weir",
+      "book": "The Martian",
+      "price": 15.50,
+      "genre": "Science Fiction"
+    },
+    {
+      "author": "Delia Owens",
+      "book": "Where the Crawdads Sing",
+      "price": 14.99,
+      "genre": "Literary Fiction"
+    },
+    {
+      "author": "Kristin Hannah",
+      "book": "The Nightingale",
+      "price": 15.75,
+      "genre": "Historical Fiction"
+    }
+  ]
+}
