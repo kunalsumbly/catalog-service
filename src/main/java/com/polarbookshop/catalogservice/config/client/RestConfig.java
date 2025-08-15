@@ -76,21 +76,21 @@ public class RestConfig {
                 .setSoTimeout(Timeout.ofMilliseconds(readTimeoutMs))
                 .build();
 
-//        // Connection timeout configuration
-//        ConnectionConfig connectionConfig = ConnectionConfig.custom()
-//                .setConnectTimeout(Timeout.ofMilliseconds(connectTimeoutMs))
-//                .build();
-//
-//        // RequestConfig now only handles request-level timeouts
-//        RequestConfig requestConfig = RequestConfig.custom()
-//                .setConnectionRequestTimeout(Timeout.ofMilliseconds(connectTimeoutMs))
-//                .build();
+        // Connection timeout configuration
+        ConnectionConfig connectionConfig = ConnectionConfig.custom()
+                .setConnectTimeout(Timeout.ofMilliseconds(connectTimeoutMs))
+                .build();
+
+        // RequestConfig now only handles request-level timeouts
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(Timeout.ofMilliseconds(connectTimeoutMs))
+                .build();
 
 
 
         HttpClientConnectionManager httpClientConnectionManager = PoolingHttpClientConnectionManagerBuilder.create()
                 .setDefaultSocketConfig(socketConfig)
-                //.setDefaultConnectionConfig(connectionConfig)  // Apply ConnectionConfig here
+                .setDefaultConnectionConfig(connectionConfig)  // Apply ConnectionConfig here
                 .setMaxConnPerRoute(20)
                 .setMaxConnTotal(20)
                 .setSSLSocketFactory(connectionFactory)
@@ -98,7 +98,7 @@ public class RestConfig {
 
         return HttpClients.custom()
                 .setConnectionManager(httpClientConnectionManager)
-               // .setDefaultRequestConfig(requestConfig)
+                .setDefaultRequestConfig(requestConfig)
                 .build();
     }
 }
